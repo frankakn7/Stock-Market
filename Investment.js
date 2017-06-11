@@ -195,8 +195,11 @@ function Graph(){
 		}		
 		if(oldInbetween != inbetween){
 			context.clearRect(0,0, CANVAS_WIDTH, CANVAS_HEIGHT);
-			Objs = [];
-			oldInbetween = inbetween;	
+			if(inbetween > oldInbetween){
+				canvasOffsetY -= CANVAS_HEIGHT;
+			}else{
+				canvasOffsetY += CANVAS_HEIGHT;
+			}	
 		}
 		context.fillText(between,180,90);
 		oldInbetween = inbetween;
@@ -219,6 +222,9 @@ function Graph(){
 	// }
 
 	function draw(){
+		context.strokeStyle = 'red';
+		context.lineWidth = 3;
+		context.beginPath();
 		for(var i=0; i < Objs.length; i++){
 			if(i===0){
 				context.moveTo(Objs[i].x+canvasOffsetX, Objs[i].y+canvasOffsetY);
@@ -227,14 +233,27 @@ function Graph(){
 			context.lineTo(Objs[i].x+canvasOffsetX, Objs[i].y+canvasOffsetY);
 			context.stroke();
 		}
+		context.closePath();
 	}
 	
 	function Text(){
-		context.clearRect(160,0,40,CANVAS_HEIGHT);
+		context.clearRect(175,0,25,CANVAS_HEIGHT);
 		context.fillStyle = 'black'
 		context.fillText(inbetween+1,180,95);
 		context.fillText(inbetween+5,180,55);
 		context.fillText(inbetween+10,180,10);
+	}
+
+	function helpLines(){
+		context.strokeStyle = 'black';
+		context.lineWidth = 1;
+		context.beginPath();
+		for(var i=0; i < 10; i++){
+			context.moveTo(0,10*i);
+			context.lineTo(CANVAS_WIDTH, 10*i);
+			context.stroke();
+		}
+		context.closePath();
 	}
 		
 	// for(var i in Objs){
@@ -242,9 +261,10 @@ function Graph(){
 	// }
 	canvasOffsetX -= 10;
 	
-	generateObj(160-canvasOffsetX, CANVAS_HEIGHT - ((share_price - inbetween)*10));
+	generateObj(160-canvasOffsetX, (CANVAS_HEIGHT - ((share_price - inbetween)*10))-canvasOffsetY);
 
 	context.clearRect(0,0, CANVAS_WIDTH, CANVAS_HEIGHT);
+	helpLines();
 	Text();
 	draw();
 	// for(var i in Objs){	
