@@ -33,7 +33,7 @@ var buyAt = 0;
 var IInterval = 0;
 
 var Objs = [];
-var objNum = 1;
+//var objNum = 0;
 
 var oldInbetween = 0;
 
@@ -48,6 +48,9 @@ var state = {
 	sellAt: 0,
 	buyAt: 0,
 }
+
+var canvasOffsetX = 0;
+var canvasOffsetY = 0;
 
 /*
 if(localStorage.getItem(SAVE_KEY) != null){
@@ -179,7 +182,7 @@ function write(){
     h1c.innerHTML = "shares are worth "+wof+" $";
     h1d.innerHTML = "shares bought for "+sbf+" $";
     h1e.innerHTML = "profit: "+profit+" $";
-    h1_time.innerHTML = "you have "+roundTime+" min left";
+    h1_time.innerHTML = "you have "+roundTime+" min left"; 
 }
 
 function Graph(){
@@ -193,7 +196,6 @@ function Graph(){
 		if(oldInbetween != inbetween){
 			context.clearRect(0,0, CANVAS_WIDTH, CANVAS_HEIGHT);
 			Objs = [];
-			objNum = 1;
 			oldInbetween = inbetween;	
 		}
 		context.fillText(between,180,90);
@@ -204,20 +206,27 @@ function Graph(){
 
 	function obj(x,y){
 		this.x = x;
-		this.y = y;
+		this.y = y; 
 	}
 	
 	function generateObj(x,y){
-		Objs[objNum] = new obj();
-		Objs[objNum].x = x;
-		Objs[objNum].y = y;
-		
-		objNum ++;
+		Objs[Objs.length] = new obj(x,y);
 	}
 	
-	function draw(that){
-	    context.fillStyle = 'green';
-	    context.fillRect(that.x, that.y, 10, 10);
+	// function draw(that){
+	//     context.fillStyle = 'green';
+	//     context.fillRect(that.x, that.y, 10, 10);
+	// }
+
+	function draw(){
+		for(var i=0; i < Objs.length; i++){
+			if(i===0){
+				context.moveTo(Objs[i].x+canvasOffsetX, Objs[i].y+canvasOffsetY);
+				continue;
+			}
+			context.lineTo(Objs[i].x+canvasOffsetX, Objs[i].y+canvasOffsetY);
+			context.stroke();
+		}
 	}
 	
 	function Text(){
@@ -228,23 +237,25 @@ function Graph(){
 		context.fillText(inbetween+10,180,10);
 	}
 		
-	for(var i in Objs){
-		Objs[i].x -= 10;
-	}
+	// for(var i in Objs){
+	// 	Objs[i].x -= 10;
+	// }
+	canvasOffsetX -= 10;
 	
-	generateObj(160, CANVAS_HEIGHT - ((share_price - inbetween)*10));
+	generateObj(160-canvasOffsetX, CANVAS_HEIGHT - ((share_price - inbetween)*10));
 
 	context.clearRect(0,0, CANVAS_WIDTH, CANVAS_HEIGHT);
+	Text();
+	draw();
+	// for(var i in Objs){	
+	// 	draw(Objs[i]);
+	// }
 	
-	for(var i in Objs){
-		Text();
-		draw(Objs[i]);
-	}
-	
-	if(objNum > 100){
-		Objs = [];
-		objNum = 1;
-	}
+	// if(objNum > 100){
+	// 	Objs = [];
+	// 	objNum = 1;
+	// }
+	var oldShare_price = share_price;
 }
 
 /*
